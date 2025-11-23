@@ -40,24 +40,25 @@ app.get("/", (req, res) => {
 // Diagnostic route - Check environment setup
 app.get("/api/health", async (req, res) => {
   try {
-    const dbStatus = mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
+    const dbStatus =
+      mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
     const hasMongoUri = !!process.env.MONGO_URI;
     const hasJwtSecret = !!process.env.JWT_SECRET;
-    
+
     res.json({
       status: "OK",
       database: dbStatus,
       environment: {
         mongoUriSet: hasMongoUri,
         jwtSecretSet: hasJwtSecret,
-        nodeEnv: process.env.NODE_ENV || "development"
+        nodeEnv: process.env.NODE_ENV || "development",
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     res.status(500).json({
       status: "ERROR",
-      error: error.message
+      error: error.message,
     });
   }
 });

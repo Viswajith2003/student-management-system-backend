@@ -34,7 +34,12 @@ app.use("/api/students", studentRoutes);
 
 // Health check route
 app.get("/", (req, res) => {
-  res.json({ message: "Student Management System API is running" });
+  const dbStatus =
+    mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
+  res.json({
+    message: "Student Management System API is running",
+    database: dbStatus,
+  });
 });
 
 // Diagnostic route - Check environment setup
@@ -76,7 +81,7 @@ app.use((err, req, res, next) => {
 
 // Start server (only if not in Vercel serverless environment)
 if (process.env.VERCEL !== "1") {
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 3000;
   const HOST = process.env.HOST || "0.0.0.0";
 
   app.listen(PORT, HOST, () => {

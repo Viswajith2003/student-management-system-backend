@@ -19,9 +19,12 @@ app.use(express.json());
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 5000,
-  })
+  .connect(
+    "mongodb+srv://studentdb:studentdb@cluster0.7hxagh4.mongodb.net/studentdb",
+    {
+      serverSelectionTimeoutMS: 5000,
+    }
+  )
   .then(() => console.log("✅ MongoDB connected successfully"))
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err);

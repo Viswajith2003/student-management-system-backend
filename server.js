@@ -37,6 +37,31 @@ app.get("/", (req, res) => {
   res.json({ message: "Student Management System API is running" });
 });
 
+// Diagnostic route - Check environment setup
+app.get("/api/health", async (req, res) => {
+  try {
+    const dbStatus = mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
+    const hasMongoUri = !!process.env.MONGO_URI;
+    const hasJwtSecret = !!process.env.JWT_SECRET;
+    
+    res.json({
+      status: "OK",
+      database: dbStatus,
+      environment: {
+        mongoUriSet: hasMongoUri,
+        jwtSecretSet: hasJwtSecret,
+        nodeEnv: process.env.NODE_ENV || "development"
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "ERROR",
+      error: error.message
+    });
+  }
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
@@ -49,7 +74,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server (only if not in Vercel serverless environment)
-if (process.env.VERCEL !== '1') {
+if (process.env.VERCEL !== "1") {
   const PORT = process.env.PORT || 5000;
   const HOST = process.env.HOST || "0.0.0.0";
 

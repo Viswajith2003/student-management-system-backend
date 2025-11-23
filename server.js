@@ -19,9 +19,14 @@ app.use(express.json());
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 5000,
+  })
   .then(() => console.log("✅ MongoDB connected successfully"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err);
+    // Don't exit in production, allow retry
+  });
 
 // Routes - MAKE SURE THIS IS CORRECT
 app.use("/api/auth", authRoutes);
@@ -43,10 +48,15 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Something went wrong!" });
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+// Start server (only if not in Vercel serverless environment)
+if (process.env.VERCEL !== '1') {
+  const PORT = process.env.PORT || 5000;
+  const HOST = process.env.HOST || "0.0.0.0";
+
+  app.listen(PORT, HOST, () => {
+    console.log(`🚀 Server running on ${HOST}:${PORT}`);
+    console.log(`📝 Environment: ${process.env.NODE_ENV || "development"}`);
+  });
+}
 
 module.exports = app;

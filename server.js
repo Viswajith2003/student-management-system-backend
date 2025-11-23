@@ -37,11 +37,11 @@ app.use("/api/students", studentRoutes);
 
 // Health check route
 app.get("/", (req, res) => {
-  // const dbStatus =
-  //   mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
+  const dbStatus =
+    mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
   res.json({
     message: "Student Management System API is running",
-    // database: dbStatus,
+    database: dbStatus,
   });
 });
 
